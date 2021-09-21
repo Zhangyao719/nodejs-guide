@@ -1,4 +1,4 @@
-# 安装nodejs
+# 1. 安装nodejs
 
 ## nodejs版本
 
@@ -18,7 +18,7 @@
 node -v
 ```
 
-# 运行nodejs程序
+## 运行nodejs程序
 
 - 创建js文件 `helloworld.js`
 - 写nodejs的内容：`console.log('hello nodejs')`
@@ -29,7 +29,11 @@ node -v
 
 注意：在nodejs中是无法使用DOM和BOM的内容的，因此`document, window`等内容是无法使用的。
 
-# global模块-全局变量
+
+
+# 2. node内置基础模块
+
+## global模块-全局变量
 
 > Node.js 中的全局对象是 `global`, 类似于浏览器中的`window`
 
@@ -44,7 +48,7 @@ __dirname: 当前文件的路径，不包括文件名
 __filename： 获取当前文件的路径，包括文件名
 ```
 
-# fs模块  FileSystem
+## fs模块  FileSystem
 > fs模块是nodejs中最常用的一个模块，因此掌握fs模块非常的有必要，fs模块的方法非常多,用到了哪个查哪个即可。
 >
 > 文档地址：http://nodejs.cn/api/fs.html
@@ -60,7 +64,7 @@ __filename： 获取当前文件的路径，包括文件名
 const fs = require("fs");
 ```
 
-## 读取文件
+### 读取文件
 
 > 语法：fs.readFile(path[, options], callback)
 
@@ -101,7 +105,7 @@ fs.readFile("data.txt", "utf8", function(err, data){
 4. Buffer对象可以调用toString()方法转换成字符串。
 ```
 
-## 写文件
+### 写文件
 
 > 语法：fs.writeFile(file, data[, options], callback)
 
@@ -121,7 +125,7 @@ fs.writeFile("2.txt", "hello world, 我是一个中国人", function(err){
 
 1. 写文件的时候，会把原来的内容给覆盖掉
 
-## 追加文件
+### 追加文件
 
 > 语法：fs.appendFile(path, data[, options], callback)
 
@@ -139,7 +143,7 @@ fs.appendFile("2.txt", "我是追加的内容", function(err){
 
 思考：如果没有appendFile，通过readFile与writeFile应该怎么实现？
 
-## 文件同步与异步的说明
+### 文件同步与异步的说明
 
 > fs中所有的文件操作，都提供了异步和同步两种方式
 
@@ -171,7 +175,7 @@ console.log(222);
 
 总结：同步操作使用虽然简单，但是会影响性能，因此尽量使用异步方法，尤其是在工作过程中。
 
-## 其他api
+### 其他api
 
 方法有很多，但是用起来都非常的简单，学会查文档
 
@@ -198,9 +202,9 @@ console.log(222);
 | `fs.stat(path, callback)`               | 查看文件状态（异步）   |
 | `fs.statSync(path)`                     | 查看文件状态（同步）   |
 
-# path模块
+## path模块
 
-## 路径操作的问题
+### 路径操作的问题
 
 在读写文件的时候，文件路径可以写相对路径或者绝对路径
 
@@ -220,7 +224,7 @@ fs.readFile("data.txt", "utf8", function(err, data) {
 
 绝对路径：`__dirname`: 当前文件的目录，`__filename`: 当前文件的目录，包含文件名
 
-## path模块的常用方法
+### path模块的常用方法
 
 > 关于路径，在linux系统中，路径分隔符使用的是`/`，但是在windows系统中，路径使用的`\`
 
@@ -252,7 +256,7 @@ console.log(path.extname(temp));//.html
 
 【优化读写文件的代码】
 
-## path模块其他api（了解）
+#### path模块其他api
 
 | 方法名                       | 描述                                 |
 | ---------------------------- | ------------------------------------ |
@@ -267,16 +271,16 @@ console.log(path.extname(temp));//.html
 
 
 
-# http模块
+## http模块
 
-## 网络请求过程
+### 网络请求过程
 
 https://blog.csdn.net/ejennahuang/article/details/114821971
 
 >1. 输入网址, 浏览器查询**本地host文件**(配置域名IP地址的映射)
 >2. 如果本地没有对应的host, 会去在线**域名解析服务器**查询(**DNS解析**)
 
-## 创建服务器基本步骤
+### 创建服务器基本步骤
 
 ```javascript
 //1. 导入http模块，http模块是node的核心模块，作用是用来创建http服务器的。
@@ -302,47 +306,46 @@ server.listen(9999, function(){
 2. request事件有两个参数，request表示请求对象，可以获取所有与请求相关的信息，response是响应对象，可以获取所有与响应相关的信息。
 3. 服务器监听的端口范围为：1-65535之间，推荐使用3000以上的端口，因为3000以下的端口一般留给系统使用
 
-## request对象详解
+### request对象详解
 
 文档地址：http://nodejs.cn/api/http.html#http_message_headers
 
->request事件的第一个参数, 代表`请求对象`，里面包含了所有请求相关的信息。
+**常见属性**：
+
+>- headers: 所有的请求头信息
+>- method： 请求的方式
+>- url： 请求的地址
 >
->**常见属性**:
->
->**headers**: 所有的请求头信息
->**method**： 请求的方式
->**url**： 请求的地址
-
-注意：在发送请求的时候，可能会出现两次请求的情况，这是因为谷歌浏览器会自动增加一个`favicon.ico`的请求。
-
-### req.url
-
-通过req.url可以获取到用户的请求地址
-
-```javascript
-// http://localhost:8080/index.html   =====>  /index.html
-// http://localhost:8080              =====>  /
-// http://localhost:8080/1.png        =====>  /1.png
-```
-
-注意：谷歌浏览器会自动发送favicon.ico请求获取小图标，这个请求不用去管，不影响页面的展示
-
-### req.method
-
-通过`req.method`可以获取到用户的请求方式,值为`GET`或者`POST`
-
-### req.headers
-
-通过req.headers获取到请求头信息
+>注意：在发送请求的时候，可能会出现两次请求的情况，这是因为谷歌浏览器会自动增加一个`favicon.ico`的请求。
 
 小结：request对象中，常用的就是method和url两个参数
 
-## response对象详解
+**注册事件**: https://nodejs.org/zh-cn/docs/guides/anatomy-of-an-http-transaction/
+
+> **请求体**
+>
+> 当接受到了一个 `POST` 或者 `PUT` 请求时，请求体对于你的应用程序非常重要。相对于访问请求头而言，获取请求体有些麻烦。传入请求对象的 `request` 其实实现了 [`ReadableStream`](https://nodejs.org/api/stream.html#stream_class_stream_readable) 接口， 这个信息流可以被监听，或者与其它流进行对接。<u>我们可以通过监听 `'data'` 和 `'end'` 事件从而把 数据给取出来</u>。
+>
+> 每次在 `'data'` 事件中触发抓获的数据块是一个 [`Buffer`](https://nodejs.org/api/buffer.html)。如果你已知是一个字符串对象，那么 最好的方案就是把这些数据收集到一个数组中，然后在 `'end'` 事件中拼接并且把它转化为字符串。	
+>
+> [end事件](http://nodejs.cn/api/http.html#http_request_end_data_encoding_callback)
+
+```js
+// 如果你已知是一个字符串对象，那么 最好的方案就是把这些数据收集到一个数组中，然后在 'end' 事件中拼接并且把它转化为字符串。
+let body = [];
+request.on('data', (chunk) => {
+  body.push(chunk);
+}).on('end', () => {
+  body = Buffer.concat(body).toString();
+  // at this point, `body` has the entire request body stored in it as a string
+});
+```
+
+
+
+### response对象详解
 
 文档地址：http://nodejs.cn/api/http.html#http_class_http_serverresponse
-
-> request事件的第二个参数, 代表`响应对象`，这个对象用于给浏览器响应
 
 常见的属性和方法：
 
@@ -356,116 +359,61 @@ res.setHeader(name, value); 设置响应头信息， 比如content-type
 res.writeHead(statusCode, statusMessage, options); 设置响应头，同时可以设置状态码和状态信息。
 ```
 
-### res.write
+**注意：必须先设置响应头，才能设置响应。** 
 
-通过`res.write(data)`给浏览器发送请求体，可以调用多次，从而提供连续的请求体
+## URL模块
 
-```javascript
-res.write('hello')
-res.write('world')
-res.write('hahaha')
-```
-
-### res.end
-
-1. 通知服务器，所有响应头和响应主体都已被发送，即服务器将其视为已完成。、
-2. 每一次请求，都必须调用`res.end()`才能结束请求
-3. 可以使用`res.end(data)`在结束请求的时候发送响应数据
-
-```javascript
-res.write('hello')
-res.end()
-
-// 等价于
-res.end('hello')
-```
-
-### res.statusCode
-
-通过`res.statusCode`属性可以设置响应的状态码，常见的有`200, 404, 500`等
-
-```javascript
-res.statusCode = 404
-res.write('404, not found')
-res.end()
-```
-
-==注意statusCode是一个属性，不是方法==
-
-### res.setHeader
-
-通过`res.setHeader(name, value)`方法可以设置响应头，常用于设置`content-type`
-
-```javascript
-res.statusCode = 404
-res.setHeader('content-type', 'text/html;chartset=utf-8')
-res.write('404, 你的页面被狗叼走了')
-res.end()
-```
-
-**注意：设置响应头和状态码必须在write方法之前，不能先调用write和end方法，然后再设置响应头和状态码**
-
-### res.writeHead
-
-通过`res.writeHead(statusCode, headers)`可以同时设置响应头和状态码
-
-```javascript
-res.writeHead(200, {
-  'content-type': 'text/html;charset=utf-8',
-  aa: 'bb'
-})
-```
-
-
-
-# 实现静态WEB服务器
-
-## 服务器响应首页
-
-- 注意：浏览器中输入的URL地址，仅仅是一个标识，不与服务器中的目录一致。也就是说：返回什么内容是由服务端的逻辑决定
+- 说明：用于 URL 处理与解析
 
 ```js
-server.on('request', function(req, res) {
-  var url = req.url
-  if(url === '/') {
-    fs.readFile('./index.html', function(err, data) {
-      if(err) {
-        return res.end('您访问的资源不存在~')
-      }
-
-      res.end(data)
-    })
-  }
-})
+// 返回一个url对象:
+Url {
+  protocol: null,
+  slashes: null,
+  auth: null,
+  host: null,
+  port: null,
+  hostname: null,
+  hash: null,
+  search: '?name=123&title=123&content=123',
+  query: 'name=123&title=123&content=123',
+  pathname: '/publish',
+  path: '/publish?name=123&title=123&content=123',
+  href: '/publish?name=123&title=123&content=123'
+}
 ```
 
-## 根据根据不同url，响应不同文件
-
-## content-type设置-MIME类型
-
-- MIME(Multipurpose Internet Mail Extensions)多用途Internet邮件扩展类型 是一种表示文档性质和格式的标准化方式
-- 浏览器通常使用MIME类型（而不是文件扩展名）来确定如何处理文档；因此服务器将正确的MIME类型附加到响应对象的头部是非常重要的
-- [MIME 类型](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Basics_of_HTTP/MIME_Types)
-
-## 静态资源的通用处理
-
-### MIME类型的通用处理-mime模块
-
-- 作用：获取文件的MIME类型
-- 安装：`npm i mime`
+- 注意：通过url拿到的查询参数都是字符串格式
 
 ```js
-var mime = require('mime')
+// 导入url模块
+const url = require('url')
 
-// 获取路径对应的MIME类型
-mime.getType('txt')                    // ⇨ 'text/plain'
-// 根据MIME获取到文件后缀名
-mime.getExtension('text/plain')        // ⇨ 'txt'
+const ret = url.parse(
+    'http://localhost:3000/details?id=1&name=jack', // 第一个参数: url字符串
+    true, // 是否将query属性（查询参数）解析为一个对象，如果为：true，则query是一个对象
+)
+console.log(ret.query) // { id: '1', name: 'jack' }
+```
+
+## querystring模块
+
+查询字符串
+
+- 用于解析与格式化 URL 查询字符串
+- 注意：只在专门处理查询字符串时使用
+
+```js
+// foo=bar&abc=xyz&abc=123
+// 将查询参数转化为对象
+const querystring = require('querystring')
+// 第一个参数: 要解析的 URL 查询字符串
+querystring.parse('foo=bar&abc=xyz') // { foo: 'bar', abc: 'xyz' }
 ```
 
 
 
-# npm - Node包管理工具
+# 3. npm - Node包管理工具
 
 ## npm的基本概念
 
@@ -584,45 +532,154 @@ nrm use taobao
 
 
 
-# 实现动态WEB服务器
+# 4. commonjs规范中的导入导出
 
-## 在node中使用art-template 
+### 导入
+
+1. **内置模块**和**第三方模块**导入时, 直接跟名称即可
+
+   ```js
+   // 内置模块
+   const fs = require('fs')
+   // 第三方模块
+   const moment = require('moment')
+   ```
+
+2. **自定义模块`必须带上相对路径`**
+
+   ```js
+   // 自定义模块
+   const { foo } = require('./utils/index')
+   ```
+
+3. 导入时 无需跟 .js 后缀
+
+### module.exports和exports的区别
+
+1. 一开始都指向**`同一个对象{ }`**,  **exports**就是**module.exports**的引用
+
+   ```js
+   exports === module.exports // true
+   ```
+
+2. 当module.exports和exports**不指向同一个对象**时, **`导入以module.exports为主`**
+
+3. **exports只能点语法赋值,  而不能重新给新对象**
+
+   ```js
+   # 错误示范:
+   // a.js:
+   exports = {
+       fun1,
+       fun2,
+   }
+   // b.js:
+   const { fun1, fun2 } = require('./a.js');
+   // 结果: fun1 undefined fun2 undefined
+   ```
+
+   **原因:** exports赋值新对象时(堆地址中开辟新的空间), **不再指向原来的对象**, 而根据上述第2点, 原module.exports中的对象 仍然为空{ },  所以没有结构出内容, 结果为undefined
+
+   ```js
+   # 正确示范:
+   // a.js:
+   exports.fun1 = fun1
+   exports.fun2 = fun2
+   // 或者
+   module.exports = {
+       fun1,
+       fun2,
+   }
+   ```
+
+   **原因: ** 此时点语法 还是在原对象上新增了属性, 并没有另起新的对象, 所以其他文件导入时, 是可以拿到的
+
+
+
+# 5.常用第三方模块
+
+### mime模块
+
+> - [MIME](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Basics_of_HTTP/MIME_Types)(Multipurpose Internet Mail Extensions): 多用途Internet邮件扩展类型，是一种表示文档性质和格式的标准化方式 
+> - 浏览器通常使用MIME类型（而不是文件扩展名）来确定如何处理文档；因此服务器将正确的MIME类型附加到响应对象的头部(content-type)是非常重要的
+> - mime模块 可以通过`getType`方法获取文件的MIME类型
+
+- 安装：`npm i mime`
+
+```js
+const mime = require('mime')
+
+// 获取路径对应的MIME类型
+mime.getType('txt')                    // ⇨ 'text/plain'
+// 根据MIME获取到文件后缀名
+mime.getExtension('text/plain')        // ⇨ 'txt'
+```
+
+### art-template模块
 
 - [文档](https://aui.github.io/art-template/zh-cn/docs/)
-- 安装
-
-```bash
-npm install art-template
-```
+- 安装:  `npm install art-template`
 
 - 核心方法
 
 ```javascript
 // 基于模板路径渲染模板
-//参数1：文件的路径
-//参数2：数据
 //返回值：返回渲染后的内容
 // template(filename, data)
-let html = template(path.join(__dirname, "pages", "index.html"), {name:"大吉大利，今晚吃鸡"});
+let html = template(
+    path.join(__dirname, "pages", "index.html"), //参数1：文件的绝对路径
+    {name:"大吉大利，今晚吃鸡"}, //参数2：数据(必须是一个对象)
+);
+
+// pages/index.html:
+<div>{{ name }}<div>
 ```
 
 **注意点：文件的路径必须是绝对路径**
 
-## get请求处理-url模块
+### moment模块
 
-- 说明：用于 URL 处理与解析
-- 注意：通过url拿到的查询参数都是字符串格式
+- [文档](http://momentjs.cn/docs/)
+
+
+
+# 6. 实现静态WEB服务器
+
+## 服务器响应首页
+
+- 注意：浏览器中输入的URL地址，仅仅是一个标识，不与服务器中的目录一致。也就是说：返回什么内容是由服务端的逻辑决定
 
 ```js
-// 导入url模块
-var url = require('url')
-
-// 解析 URL 字符串并返回一个 URL 对象
-// 第一个参数：表示要解析的URL字符串
-// 第二个参数：是否将query属性（查询参数）解析为一个对象，如果为：true，则query是一个对象
-var ret = url.parse('http://localhost:3000/details?id=1&name=jack', true)
-console.log(ret.query) // { id: '1', name: 'jack' }
+server.on('request', function(req, res) {
+  var url = req.url
+  if(url === '/') {
+    fs.readFile('./index.html', function(err, data) {
+      if(err) {
+        return res.end('您访问的资源不存在~')
+      }
+      res.end(data)
+    })
+  }
+})
 ```
+
+## 根据根据不同url，响应不同文件
+
+## content-type设置-MIME类型
+
+- 使用mime模块MIME类型的通用处理(图片资源等)(详见mime模块↑)
+
+
+
+# 7. 实现动态WEB服务器
+
+## 在node中使用art-template 
+
+- 详见art-template模块↑
+
+## get请求处理-url模块
+
+- 通过`url.parse`, 解析url, 获取get请求携带的query参数(详情见url模块↑)
 
 ## 服务端重定向
 
@@ -640,6 +697,8 @@ res.end()
 ## POST请求参数的处理
 
 - 说明：POST请求可以发送大量数据，没有大小限制
+- req.on 注册 data事件
+- req.on 注册 end事件
 
 ```js
 // 接受POST参数
@@ -659,15 +718,4 @@ req.on('end', function () {
 
 ## 请求体处理-querystring模块
 
-- 用于解析与格式化 URL 查询字符串
-- 注意：只在专门处理查询字符串时使用
-
-```js
-// foo=bar&abc=xyz&abc=123
-var querystring = require('querystring')
-
-// 将查询参数转化为对象
-// 第一个参数: 要解析的 URL 查询字符串
-querystring.parse('foo=bar&abc=xyz') // { foo: 'bar', abc: 'xyz' }
-```
-
+- 使用querystring处理POST请求数据(详情见querystring ↑)
