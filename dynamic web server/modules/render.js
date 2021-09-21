@@ -65,7 +65,6 @@ function renderPublish(req, res) {
       body = Buffer.concat(body).toString();
       // 1.2.1 使用querystring模块获取对象结构
       query = querystring.parse(body);
-      console.log(111, body, query);
     })
   }
   // 2. 取原数据
@@ -93,6 +92,25 @@ function renderPublish(req, res) {
   });
 }
 
+function renderDelete(res, pathQuery) {
+  const { query } = url.parse(pathQuery, true);
+  readFile({
+    path: DATAPATH,
+    encoding: 'utf8',
+    callback: (data) => {
+      data = JSON.parse(data).filter((item) => item.id !== +query.id);
+      writeFile({
+        path: DATAPATH,
+        data: JSON.stringify(data, null, 2),
+        callback: () => {
+          res.writeHead(302, { location: '/' });
+          res.end('delete success');
+        },
+      })
+    }
+  })
+}
+
 function renderNotFound(res) {
   res.writeHead(404, {
     'content-type': 'text/html;charset=utf-8'
@@ -106,4 +124,5 @@ module.exports = {
   renderAdd,
   renderNotFound,
   renderPublish,
+  renderDelete,
 }

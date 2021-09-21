@@ -5,6 +5,7 @@ const {
   renderNotFound,
   renderAdd,
   renderPublish,
+  renderDelete,
 } = require('./modules/render');
 
 const server = http.createServer();
@@ -19,6 +20,8 @@ server.on('request', (req, res) => {
     renderAdd(res);
   } else if (reqUrl.startsWith('/publish') ) {
     renderPublish(req, res);
+  } else if (reqUrl.startsWith('/delete') ) {
+    renderDelete(res, reqUrl);
   } else {
     renderNotFound(res);
   }
