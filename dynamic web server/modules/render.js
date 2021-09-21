@@ -24,14 +24,14 @@ function renderIndex(res) {
   });
 }
 
-function renderStatic(res, staticPath) {
+function renderStatic(req, res) {
   // 响应静态资源
-  const mimePath = path.join(__dirname, '..', staticPath);
+  const mimePath = path.join(__dirname, '..', req.url);
   readFile({
     path: mimePath,
     callback: (data) => {
       res.writeHead(200, {
-        'content-type': mime.getType(staticPath),
+        'content-type': mime.getType(req.url),
       });
       res.end(data);
     }
@@ -92,8 +92,8 @@ function renderPublish(req, res) {
   });
 }
 
-function renderDelete(res, pathQuery) {
-  const { query } = url.parse(pathQuery, true);
+function renderDelete(req, res) {
+  const { query } = url.parse(req.url, true);
   readFile({
     path: DATAPATH,
     encoding: 'utf8',
@@ -111,6 +111,21 @@ function renderDelete(res, pathQuery) {
   })
 }
 
+function renderEdit(req, res) {
+  const filePath = path.resolve(__dirname, '..', 'views', 'edit.html');
+  const { query } = url.parse(req.url, true);
+  readFile({
+    path: DATAPATH,
+    encoding: 'utf8',
+    callback: (data) => {
+      const currentComment = JSON.parse(data).find((item) => item.id === +query.id);
+      const html = template(filePath, currentComment);
+      res.setHeader('Content-Type', 'text/html;charset=utf-8');
+      res.end(html);
+    }
+  })
+}
+
 function renderNotFound(res) {
   res.writeHead(404, {
     'content-type': 'text/html;charset=utf-8'
@@ -124,5 +139,6 @@ module.exports = {
   renderAdd,
   renderNotFound,
   renderPublish,
+  renderEdit,
   renderDelete,
 }
