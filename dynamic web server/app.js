@@ -5,6 +5,8 @@ const {
   renderNotFound,
   renderAdd,
   renderPublish,
+  renderDelete,
+  renderEdit,
 } = require('./modules/render');
 
 const server = http.createServer();
@@ -14,11 +16,15 @@ server.on('request', (req, res) => {
   if (['/', '/index'].includes(reqUrl)) {
     renderIndex(res);
   } else if (reqUrl.startsWith('/static')) {
-    renderStatic(res, reqUrl);
+    renderStatic(req, res);
   } else if (reqUrl.startsWith('/add')) {
     renderAdd(res);
   } else if (reqUrl.startsWith('/publish') ) {
     renderPublish(req, res);
+  } else if (reqUrl.startsWith('/delete') ) {
+    renderDelete(req, res);
+  } else if (reqUrl.startsWith('/edit') ) {
+    renderEdit(req, res);
   } else {
     renderNotFound(res);
   }

@@ -24,14 +24,14 @@ function renderIndex(res) {
   });
 }
 
-function renderStatic(res, staticPath) {
+function renderStatic(req, res) {
   // 响应静态资源
-  const mimePath = path.join(__dirname, '..', staticPath);
+  const mimePath = path.join(__dirname, '..', req.url);
   readFile({
     path: mimePath,
     callback: (data) => {
       res.writeHead(200, {
-        'content-type': mime.getType(staticPath),
+        'content-type': mime.getType(req.url),
       });
       res.end(data);
     }
@@ -65,7 +65,6 @@ function renderPublish(req, res) {
       body = Buffer.concat(body).toString();
       // 1.2.1 使用querystring模块获取对象结构
       query = querystring.parse(body);
-      console.log(111, body, query);
     })
   }
   // 2. 取原数据
@@ -93,6 +92,40 @@ function renderPublish(req, res) {
   });
 }
 
+function renderDelete(req, res) {
+  const { query } = url.parse(req.url, true);
+  readFile({
+    path: DATAPATH,
+    encoding: 'utf8',
+    callback: (data) => {
+      data = JSON.parse(data).filter((item) => item.id !== +query.id);
+      writeFile({
+        path: DATAPATH,
+        data: JSON.stringify(data, null, 2),
+        callback: () => {
+          res.writeHead(302, { location: '/' });
+          res.end('delete success');
+        },
+      })
+    }
+  })
+}
+
+function renderEdit(req, res) {
+  const filePath = path.resolve(__dirname, '..', 'views', 'edit.html');
+  const { query } = url.parse(req.url, true);
+  readFile({
+    path: DATAPATH,
+    encoding: 'utf8',
+    callback: (data) => {
+      const currentComment = JSON.parse(data).find((item) => item.id === +query.id);
+      const html = template(filePath, currentComment);
+      res.setHeader('Content-Type', 'text/html;charset=utf-8');
+      res.end(html);
+    }
+  })
+}
+
 function renderNotFound(res) {
   res.writeHead(404, {
     'content-type': 'text/html;charset=utf-8'
@@ -106,4 +139,6 @@ module.exports = {
   renderAdd,
   renderNotFound,
   renderPublish,
+  renderEdit,
+  renderDelete,
 }
