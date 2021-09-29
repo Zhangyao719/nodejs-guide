@@ -1,36 +1,10 @@
 const http = require('http');
-const {
-  renderIndex,
-  renderStatic,
-  renderNotFound,
-  renderAdd,
-  renderPublish,
-  renderDelete,
-  renderEdit,
-  renderUpdate,
-} = require('./modules/render');
+const router = require('./modules/router');
 
 const server = http.createServer();
 
 server.on('request', (req, res) => {
-  const reqUrl = req.url;
-  if (['/', '/index'].includes(reqUrl)) {
-    renderIndex(res);
-  } else if (reqUrl.startsWith('/static')) {
-    renderStatic(req, res);
-  } else if (reqUrl.startsWith('/add')) {
-    renderAdd(res);
-  } else if (reqUrl.startsWith('/publish') ) {
-    renderPublish(req, res);
-  } else if (reqUrl.startsWith('/delete') ) {
-    renderDelete(req, res);
-  } else if (reqUrl.startsWith('/edit') ) {
-    renderEdit(req, res);
-  } else if (reqUrl.startsWith('/update') ) {
-    renderUpdate(req, res);
-  } else {
-    renderNotFound(res);
-  }
+  router(req, res);
 });
 
 server.listen(8080, () => {
