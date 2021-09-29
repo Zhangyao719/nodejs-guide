@@ -7,6 +7,7 @@ const {
   renderPublish,
   renderDelete,
   renderEdit,
+  renderUpdate,
 } = require('./modules/render');
 
 const server = http.createServer();
@@ -25,6 +26,8 @@ server.on('request', (req, res) => {
     renderDelete(req, res);
   } else if (reqUrl.startsWith('/edit') ) {
     renderEdit(req, res);
+  } else if (reqUrl.startsWith('/update') ) {
+    renderUpdate(req, res);
   } else {
     renderNotFound(res);
   }
